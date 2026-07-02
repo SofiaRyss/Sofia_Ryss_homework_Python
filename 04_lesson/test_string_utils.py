@@ -35,6 +35,19 @@ class TestCapitalize:
         """Негативный тест: строка начинается со спецсимвола"""
         assert string_utils.capitalize("!hello") == "!hello"
 
+    def test_capitalize_with_spaces_in_string(self, string_utils):
+        """Позитивный тест: строка с пробелами (дата)"""
+        assert string_utils.capitalize("04 апреля 2023") == "04 апреля 2023"
+
+    def test_capitalize_numbers_as_string(self, string_utils):
+        """Позитивный тест: числа как строка"""
+        assert string_utils.capitalize("123") == "123"
+
+    def test_capitalize_none(self, string_utils):
+        """Негативный тест: None вместо строки"""
+        with pytest.raises(AttributeError):
+            string_utils.capitalize(None)
+
 
 class TestTrim:
     """Тесты для метода trim"""
@@ -71,6 +84,21 @@ class TestTrim:
         result = string_utils.trim("\thello")
         assert result == "\thello"  # Табуляция осталась!
 
+    def test_trim_only_space(self, string_utils):
+        """Негативный тест: строка только с пробелом"""
+        assert string_utils.trim(" ") == ""
+
+    def test_trim_string_with_spaces(self, string_utils):
+        """Позитивный тест: строка с пробелами (дата)
+        Примечание: метод trim() удаляет пробелы только в начале,
+        поэтому пробелы в конце остаются (это дефект метода)"""
+        assert string_utils.trim("  04 апреля 2023  ") == "04 апреля 2023  "
+
+    def test_trim_none(self, string_utils):
+        """Негативный тест: None вместо строки"""
+        with pytest.raises(AttributeError):
+            string_utils.trim(None)
+
 
 class TestContains:
     """Тесты для метода contains"""
@@ -99,6 +127,22 @@ class TestContains:
     def test_contains_case_sensitive(self, string_utils):
         """Негативный тест: регистр важен"""
         assert string_utils.contains("SkyPro", "s") is False
+    def test_contains_space_only(self, string_utils):
+        """Негативный тест: строка только с пробелом"""
+        assert string_utils.contains(" ", "a") is False
+    
+    def test_contains_numbers_as_string(self, string_utils):
+        """Позитивный тест: числа как строка"""
+        assert string_utils.contains("123", "2") is True
+    
+    def test_contains_with_spaces_in_string(self, string_utils):
+        """Позитивный тест: строка с пробелами (дата)"""
+        assert string_utils.contains("04 апреля 2023", "апреля") is True
+    
+    def test_contains_none_string(self, string_utils):
+        """Негативный тест: None вместо строки"""
+        with pytest.raises(AttributeError):
+            string_utils.contains(None, "a")
 
 
 class TestDeleteSymbol:
@@ -127,3 +171,20 @@ class TestDeleteSymbol:
     def test_delete_empty_string(self, string_utils):
         """Негативный тест: пустая строка"""
         assert string_utils.delete_symbol("", "a") == ""
+    
+    def test_delete_space_only(self, string_utils):
+        """Негативный тест: строка только с пробелом"""
+        assert string_utils.delete_symbol(" ", " ") == ""
+    
+    def test_delete_numbers_as_string(self, string_utils):
+        """Позитивный тест: числа как строка"""
+        assert string_utils.delete_symbol("123", "2") == "13"
+    
+    def test_delete_with_spaces_in_string(self, string_utils):
+        """Позитивный тест: строка с пробелами (дата)"""
+        assert string_utils.delete_symbol("04 апреля 2023", " ") == "04апреля2023"
+    
+    def test_delete_none_string(self, string_utils):
+        """Негативный тест: None вместо строки"""
+        with pytest.raises(AttributeError):
+            string_utils.delete_symbol(None, "a")
