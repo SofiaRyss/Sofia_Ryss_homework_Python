@@ -16,26 +16,29 @@ def test_form_submission():
         )
         driver.get(url)
 
-        driver.find_element(By.ID, "firstName").send_keys("Иван")
-        driver.find_element(By.ID, "lastName").send_keys("Петров")
-        driver.find_element(By.ID, "address").send_keys("Ленина, 55-3")
-        driver.find_element(By.ID, "email").send_keys("test@skypro.com")
-        driver.find_element(By.ID, "phone").send_keys("+7985899998787")
-        driver.find_element(By.ID, "city").send_keys("Москва")
-        driver.find_element(By.ID, "country").send_keys("Россия")
-        driver.find_element(By.ID, "jobPosition").send_keys("QA")
-        driver.find_element(By.ID, "company").send_keys("SkyPro")
+        # Меняем By.ID на By.NAME!
+        driver.find_element(By.NAME, "firstName").send_keys("Иван")
+        driver.find_element(By.NAME, "lastName").send_keys("Петров")
+        driver.find_element(By.NAME, "address").send_keys("Ленина, 55-3")
+        driver.find_element(By.NAME, "email").send_keys("test@skypro.com")
+        driver.find_element(By.NAME, "phone").send_keys("+7985899998787")
+        driver.find_element(By.NAME, "city").send_keys("Москва")
+        driver.find_element(By.NAME, "country").send_keys("Россия")
+        driver.find_element(By.NAME, "jobPosition").send_keys("QA")
+        driver.find_element(By.NAME, "company").send_keys("SkyPro")
 
-        driver.find_element(By.ID, "submit").click()
+        driver.find_element(By.XPATH, "//button[text()='Submit']").click()
 
-        zip_el = driver.find_element(By.ID, "zipCode")
+        # Проверяем zip code (он тоже по name)
+        zip_el = driver.find_element(By.NAME, "zipCode")
         zip_style = zip_el.get_attribute("style").lower()
         zip_class = zip_el.get_attribute("class").lower()
         assert (
             "red" in zip_style or "invalid" in zip_class
         ), "Zip code должен быть красным!"
 
-        fn_el = driver.find_element(By.ID, "firstName")
+        # Проверяем firstName
+        fn_el = driver.find_element(By.NAME, "firstName")
         fn_style = fn_el.get_attribute("style").lower()
         fn_class = fn_el.get_attribute("class").lower()
         assert (

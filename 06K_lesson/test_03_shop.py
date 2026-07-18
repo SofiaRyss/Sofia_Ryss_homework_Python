@@ -30,12 +30,14 @@ def test_shop_purchase():
 
         driver.find_element(By.ID, "continue").click()
 
-        total_el = driver.find_element(By.ID, "total")
+        # Total ищем правильно!
+        total_el = driver.find_element(
+            By.CSS_SELECTOR, ".summary_subtotal_label")
         total = total_el.text
 
         driver.close()
 
-        assert total == "$58.29", (
+        assert "$58.29" in total, (
             f"Ожидали $58.29, получили {total}"
         )
 

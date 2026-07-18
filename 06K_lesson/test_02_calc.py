@@ -19,18 +19,25 @@ def test_calculator():
         driver.get(url)
         wait = WebDriverWait(driver, 60)
 
+        # Поле delay ищем по CSS
         delay = driver.find_element(By.CSS_SELECTOR, "#delay")
         delay.clear()
         delay.send_keys("45")
 
-        driver.find_element(By.XPATH, "//button[. = '7']").click()
-        driver.find_element(By.XPATH, "//button[. = '+']").click()
-        driver.find_element(By.XPATH, "//button[. = '8']").click()
-        driver.find_element(By.XPATH, "//button[. = '=']").click()
+        # Кнопки калькулятора ищем по XPath
+        driver.find_element(
+            By.XPATH, "//button[contains(text(), '7')]").click()
+        driver.find_element(
+            By.XPATH, "//button[contains(text(), '+')]").click()
+        driver.find_element(
+            By.XPATH, "//button[contains(text(), '8')]").click()
+        driver.find_element(
+            By.XPATH, "//button[contains(text(), '=')]").click()
 
+        # Ждём результат
         result_el = wait.until(
             EC.visibility_of_element_located(
-                (By.CLASS_NAME, "screen")
+                (By.CSS_SELECTOR, ".screen")
             )
         )
 
