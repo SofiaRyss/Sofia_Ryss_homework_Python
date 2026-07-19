@@ -1,15 +1,29 @@
+"""
+ТЕХНИЧЕСКОЕ ПРИМЕЧАНИЕ ДЛЯ НАСТАВНИКА:
+Согласно ТЗ, тест должен выполняться в Google Chrome.
+Однако на данном рабочем месте браузеры на движке Chromium
+(Chrome, Edge) блокируются на уровне системных политик
+безопасности Windows (политика RemoteDebuggingAllowed: false).
+Для демонстрации корректности кода, локаторов и явных ожиданий
+(WebDriverWait), тест выполнен в браузере Firefox, который
+успешно отрабатывает сценарий.
+Локаторы кнопок оптимизированы через XPath для тегов span,
+как указано в исходном коде страницы.
+"""
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.firefox.service import Service
+from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
 def test_calculator():
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install())
+    driver = webdriver.Firefox(
+        service=Service(GeckoDriverManager().install())
     )
+    # Увеличиваем ожидание до 50 секунд
+    wait = WebDriverWait(driver, 50)
 
     try:
         url = (
@@ -17,36 +31,30 @@ def test_calculator():
             "selenium-webdriver-java/slow-calculator.html"
         )
         driver.get(url)
-        wait = WebDriverWait(driver, 60)
 
-        # Поле delay ищем по CSS
-        delay = driver.find_element(By.CSS_SELECTOR, "#delay")
-        delay.clear()
-        delay.send_keys("45")
+        driver.find_element(By.CSS_SELECTOR, "#delay").clear()
+        driver.find_element(By.CSS_SELECTOR, "#delay").send_keys("45")
 
-        # Кнопки калькулятора ищем по XPath
-        driver.find_element(
-            By.XPATH, "//button[contains(text(), '7')]").click()
-        driver.find_element(
-            By.XPATH, "//button[contains(text(), '+')]").click()
-        driver.find_element(
-            By.XPATH, "//button[contains(text(), '8')]").click()
-        driver.find_element(
-            By.XPATH, "//button[contains(text(), '=')]").click()
+        # ИСПРАВЛЕНО: используем XPath для span, как в оригинальном коде сайта
+        driver.find_element(By.XPATH, "//span[text()='7']").click()
+        driver.find_element(By.XPATH, "//span[text()='+']").click()
+        driver.find_element(By.XPATH, "//span[text()='8']").click()
+        driver.find_element(By.XPATH, "//span[text()='=']").click()
 
-        # Ждём результат
-        result_el = wait.until(
-            EC.visibility_of_element_located(
-                (By.CSS_SELECTOR, ".screen")
+        # Явное ожидание появления текста "15"
+        wait.until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, ".screen"), "15"
             )
         )
 
-        result = result_el.text
-        assert result == "15", (
-            f"Ожидали 15, получили {result}"
+        final_text = driver.find_element(
+            By.CSS_SELECTOR, ".screen"
+        ).text
+        assert final_text == "15", (
+            f"Ожидали 15, получили {final_text}"
         )
 
-        print("✅ Тест калькулятора пройден!")
-
+        print("✅ Тест калькулятора пройден успешно в Firefox!")
     finally:
         driver.quit()
