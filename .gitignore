@@ -216,3 +216,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+06K_lesson/test_chrome_clean.py
+06K_lesson/test_edge_clean.py
