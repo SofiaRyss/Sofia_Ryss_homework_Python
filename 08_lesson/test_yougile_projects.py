@@ -9,7 +9,7 @@ from yougile_client import YougileClient
 # ВАЖНО: Для запуска тестов необходимо:
 # 1. Заменить 'YOUR_API_TOKEN_HERE' на реальный API токен Yougile
 # 2. Заменить 'YOUR_USER_ID_HERE' на реальный ID пользователя (UUID)
-
+# Наставник: пожалуйста, вставьте свои данные перед запуском!
 API_TOKEN = "YOUR_API_TOKEN_HERE"
 USER_ID = "YOUR_USER_ID_HERE"
 
@@ -35,9 +35,9 @@ class TestProjectsPositive:
         # Создаём проект
         response = client.create_project(project_title, users)
 
-        # Проверяем успешное создание
-        assert response.status_code == 200, (
-            f"Ожидали 200, получили {response.status_code}: "
+        # Проверяем успешное создание (201 Created)
+        assert response.status_code == 201, (
+            f"Ожидали 201, получили {response.status_code}: "
             f"{response.text}"
         )
 
@@ -47,9 +47,6 @@ class TestProjectsPositive:
         assert project_data["title"] == project_title, (
             f"Название не совпадает: {project_data['title']}"
         )
-
-        # Сохраняем ID для последующих тестов (если нужно)
-        self.project_id = project_data["id"]
 
     def test_get_project_positive(self, client):
         """
@@ -97,10 +94,15 @@ class TestProjectsPositive:
             f"{response.text}"
         )
 
-        # Проверяем, что проект действительно обновился
-        updated_project = response.json()
-        assert updated_project["title"] == new_title, (
-            f"Название не обновилось: {updated_project['title']}"
+        # Делаем GET запрос, чтобы проверить, что проект обновился
+        get_response = client.get_project(project_id)
+        assert get_response.status_code == 200, (
+            f"GET запрос не удался: {get_response.status_code}"
+        )
+
+        project_data = get_response.json()
+        assert project_data["title"] == new_title, (
+            f"Название не обновилось: {project_data['title']}"
         )
 
 
